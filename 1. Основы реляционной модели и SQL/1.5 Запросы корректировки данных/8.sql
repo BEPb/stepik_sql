@@ -1,5 +1,8 @@
-/*Удалить из таблицы supply книги тех авторов, общее 
-количество экземпляров книг которых в таблице book превышает 10.*/
-DELETE FROM supply 
-WHERE author IN (SELECT author FROM book GROUP by author HAVING SUM(amount) > 10);
-SELECT * FROM supply;
+DELETE FROM supply                  /* удалить из таблицы */
+    WHERE author IN                 /* где автор в списке */
+        (SELECT author              /* выбрать авторов */
+        FROM book                   /* из таблицы */
+        GROUP by author             /* сгруппировать по столбцу автор */
+        HAVING SUM(amount) > 10);   /* где сумма больше 10 */
+
+
