@@ -1,7 +1,7 @@
-/*Вывести информацию о книгах(автор, название, цена), 
-цена которых меньше самой большой из минимальных цен, 
-вычисленной для каждого автора.*/
-SELECT author, title, price 
-FROM book 
-WHERE author = ANY 
-	(SELECT author FROM book GROUP BY author HAVING AVG(price) >= (SELECT AVG(price) FROM book));
+SELECT                          /* выбрать информацию */
+    author, title, price        /* столбцы */
+    FROM book                   /* из таблицы */
+    WHERE price < ANY           /* где цена меньше любого из */
+        (SELECT MIN(price)      /* минимальной цены */
+        FROM book               /* таблицы */
+        GROUP BY author)        /* сгруппированной по авторам */
