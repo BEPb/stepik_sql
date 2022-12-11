@@ -1,0 +1,1 @@
+SELECT DISTINCT amount FROM book;   /*Отобрать различные элементы столбца amount таблицы book.*/
