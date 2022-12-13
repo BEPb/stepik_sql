@@ -1,6 +1,6 @@
-/*Вывести информацию о командировках сотрудника(ов), которые были самыми короткими по времени.*/
-SELECT name, city, date_first, date_last 
-FROM trip 
-WHERE DATEDIFF(date_last, date_first) = 
-	(SELECT MIN(DATEDIFF(date_last, date_first)) FROM trip);
+SELECT                                                              /* выбрать данные */
+    name, city, date_first, date_last                               /* столбцы */
+    FROM trip                                                       /* из таблицы */
+    WHERE DATEDIFF(date_last, date_first) =                         /* где разница дат равна */
+        (SELECT MIN(DATEDIFF(date_last, date_first)) FROM trip);    /* минимальному сроку командировки */
 
