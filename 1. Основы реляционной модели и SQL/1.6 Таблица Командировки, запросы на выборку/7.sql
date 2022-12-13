@@ -1,9 +1,6 @@
-/*Вывести информацию о командировках, начало и конец 
-которых относятся к одному месяцу (год может быть любой). 
-Результат отсортировать сначала  в алфавитном порядке по названию 
-города, а затем по фамилии сотрудника ..*/
-SELECT name, city, date_first, date_last 
-FROM trip 
-WHERE MONTH(date_first) = MONTH(date_last) 
-ORDER BY city, name;
+SELECT                                          /* выбрать данные */
+    name, city, date_first, date_last           /* столбцы */
+    FROM trip                                   /* из таблицы */
+    WHERE MONTH(date_first) = MONTH(date_last)  /* где месяц начала равен месяцу конца командировки */
+    ORDER BY city, name;                        /* отсортировать сначала по городам потом по именам в алф. порядке */
 
