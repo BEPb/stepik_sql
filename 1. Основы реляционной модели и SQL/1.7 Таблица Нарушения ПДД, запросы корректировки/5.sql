@@ -1,18 +1,12 @@
-/*В таблице fine увеличить в два раза сумму неоплаченных
-штрафов для отобранных на предыдущем шаге записей. 
-Пояснение к заданию
-	Для всех  нарушений, по которым штраф еще не оплачен, (тех, у которых date_payment 
-имеет пустое значение Null), необходимо проверить, является ли данное нарушение для 
-водителя и машины повторным, если да –  увеличить штраф в два раза.
-	Если водитель совершил нарушение на другой машине, ему увеличивать штраф не нужно.
-	Если несколько повторных нарушений не оплачены, то штраф увеличить для всех.
-	Этот запрос реализован на предыдущем шаге.*/
-UPDATE fine f, 
-	(SELECT name, number_plate, violation 
-    FROM fine 
-    GROUP BY name, violation, number_plate 
-    HAVING COUNT(violation) >= 2) query_in 
-SET f.sum_fine = f.sum_fine * 2 
-WHERE f.date_payment IS NULL AND f.name = query_in.name AND f.number_plate = query_in.number_plate AND f.violation = query_in.violation;
-SELECT * FROM fine;
+UPDATE fine f,                                  /* обновить таблицу под псевдонимом f */
+	(SELECT name, number_plate, violation       /* обновить таблицу под псевдонимом query_in в которой выбрать столбцы */
+    FROM fine                                   /* из таблицы */
+    GROUP BY name, violation, number_plate      /* сгруппировать по элементам столбцов */
+    HAVING COUNT(violation) >= 2) query_in      /* имеющих нарушения больше 1-го */
+SET f.sum_fine = f.sum_fine * 2                 /* обновить столбец sum_fine таблицы f */
+WHERE f.date_payment IS NULL                    /* где дата оплаты отсутствует */
+    AND f.name = query_in.name                  /* и имя равны в другой таблице, т.е. >=2 нарушения */
+    AND f.number_plate = query_in.number_plate  /* и номер равны в другой таблице, т.е. >=2 нарушения */
+    AND f.violation = query_in.violation;       /* и нарушения равны в другой таблице, т.е. >=2 нарушения */
+
 
