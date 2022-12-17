@@ -1,8 +1,7 @@
-/*Вывести информацию о книгах (жанр, книга, автор), относящихся к жанру, 
-включающему слово «роман» в отсортированном по названиям книг виде.*/
-SELECT name_genre, title, name_author 
-FROM genre 
-	INNER JOIN book ON genre.genre_id = book.genre_id 
-    INNER JOIN author ON author.author_id = book.author_id 
-WHERE name_genre LIKE "%роман%" 
-ORDER BY title;
+SELECT                                                      /*Вывести информацию*/
+    name_genre, title, name_author                          /*столбцы */
+FROM genre                                                  /*из таблицы */
+	INNER JOIN book ON genre.genre_id = book.genre_id       /*соединенной с таблицей */
+    INNER JOIN author ON author.author_id = book.author_id  /*соединенной с таблицей */
+WHERE name_genre LIKE "%роман%"                             /* где имя содержит слово роман*/
+ORDER BY title;                                             /* отсортировать по названию */
