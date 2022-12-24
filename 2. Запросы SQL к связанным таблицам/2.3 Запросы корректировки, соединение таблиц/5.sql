@@ -1,9 +1,6 @@
-/* Удалить всех авторов и все их книги, общее количество книг которых меньше 20.*/
-DELETE FROM author 
-WHERE author_id IN 
-	(SELECT author_id 
-    FROM book 
-    GROUP BY author_id 
-    HAVING SUM(amount) < 20);
-SELECT * FROM author;
-SELECT * FROM book;
+DELETE FROM author              /* удалить из таблицы */
+WHERE author_id IN              /* где номер автора в диапазоне */
+	(SELECT author_id           /* выбрать данные из столбца */
+    FROM book                   /* таблицы */
+    GROUP BY author_id          /* сгруппировать по номеру автора */
+    HAVING SUM(amount) < 20);   /* где сумма количества меньше 20 */
