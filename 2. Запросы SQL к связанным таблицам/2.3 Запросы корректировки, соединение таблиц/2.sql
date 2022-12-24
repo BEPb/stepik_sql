@@ -1,8 +1,5 @@
-/*Включить новых авторов в таблицу author с помощью запроса 
-на добавление, а затем вывести все данные из таблицы author. 
- Новыми считаются авторы, которые есть в таблице supply, но нет в таблице author.*/
-INSERT INTO author (name_author) 
-	(SELECT supply.author 
-    FROM author 
-		RIGHT JOIN supply ON supply.author = author.name_author 
-	WHERE author.name_author IS NULL);
+INSERT INTO author (name_author)                                    /* вставить в таблицу (столбец) */
+	(SELECT supply.author                                           /* выбрать данные столбца author из таблицы supply */
+    FROM author                                                     /* из таблицы author */
+		RIGHT JOIN supply ON supply.author = author.name_author     /* объединенной с таблицей supply где имена авторов одинаковы */
+	WHERE author.name_author IS NULL);                              /* где имя автора в таблице author не указано */
