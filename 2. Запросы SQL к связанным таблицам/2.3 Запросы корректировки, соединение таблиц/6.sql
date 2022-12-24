@@ -1,10 +1,6 @@
-/*Удалить все жанры, число книг с различными названиями у которых
- меньше 3. В таблицу book для этих жанров установить значение Null (None).*/
-DELETE FROM genre 
-WHERE genre_id IN 
-	(SELECT genre_id 
-    FROM book 
-    GROUP BY book.genre_id 
-    HAVING COUNT(title) < 3);
-SELECT * FROM genre;
-SELECT * FROM book;
+DELETE FROM genre               /* удалить из таблицы */
+WHERE genre_id IN               /* где столбец номер жанра в диапазоне */
+	(SELECT genre_id            /* выбрать данные из столбца */
+    FROM book                   /* таблицы */
+    GROUP BY book.genre_id      /* сгруппировать по жанру */
+    HAVING COUNT(title) < 4);   /* где количество названий меньше 4 */
