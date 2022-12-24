@@ -1,47 +1,14 @@
-/* ~~~ 1.Вывести лучших клиентов (по общей сумме заказов)
-2.То же для городов (из каких городов идут самые крупные заказы)
-3.Таргетированная реклама. Рекомендации для заказчиков:
-а)вывести другие книги заказанных вами авторов;
-б)вывести другие книги заказанных вами жанров.*/
-SELECT ANY_VALUE(name_client) AS name_client, ANY_VALUE(SUM(price * buy_book.amount)) AS Сумма_заказов_клиента 
-FROM book 
-    INNER JOIN buy_book USING (book_id)
-    INNER JOIN buy USING (buy_id)
-    INNER JOIN client USING (client_id)
-GROUP BY name_client;
-
-SELECT ANY_VALUE(name_city) AS name_city, ANY_VALUE(SUM(price * buy_book.amount)) AS Сумма_заказов_из_города 
-FROM book 
-    INNER JOIN buy_book USING (book_id)
-    INNER JOIN buy USING (buy_id)
-    INNER JOIN client USING (client_id)
-    INNER JOIN city USING (city_id)
-GROUP BY name_city;
-
-SELECT ANY_VALUE(name_client) AS name_city, ANY_VALUE(name_author) AS name_author, ANY_VALUE(book.title) AS Заказывал
-FROM author
-    INNER JOIN book USING (author_id)
-    INNER JOIN buy_book USING (book_id)
-    INNER JOIN buy USING (buy_id)
-    INNER JOIN client USING (client_id)
-    INNER JOIN city USING (city_id)
-ORDER BY name_client, name_author;
-
-SELECT name_author, title 
-FROM author INNER JOIN book USING (author_id)
-WHERE title NOT IN 
-(SELECT ANY_VALUE(book.title) AS title
-FROM author
-    INNER JOIN book USING (author_id)
-    INNER JOIN buy_book USING (book_id)
-    INNER JOIN buy USING (buy_id)
-    INNER JOIN client USING (client_id)
-ORDER BY name_author, title);
-
-(SELECT DISTINCT ANY_VALUE(book.title) AS title
-FROM author
-    INNER JOIN book USING (author_id)
-    INNER JOIN buy_book USING (book_id)
-    INNER JOIN buy USING (buy_id)
-    INNER JOIN client USING (client_id)
-ORDER BY title);
+/*Сравнить ежемесячную выручку от продажи книг за текущий
+ и предыдущий годы. Для этого вывести год, месяц, сумму 
+ выручки в отсортированном сначала по возрастанию месяцев,
+ затем по возрастанию лет виде. Название столбцов: Год, Месяц, Сумма.*/
+SELECT ANY_VALUE(YEAR(date_payment)) AS Год, ANY_VALUE(MONTHNAME(date_payment)) AS Месяц, ANY_VALUE(SUM(price * amount)) AS Сумма
+FROM buy_archive GROUP BY MONTH(date_payment)
+UNION ALL
+SELECT ANY_VALUE(YEAR(date_step_end)) AS Год, ANY_VALUE(MONTHNAME(date_step_end)) AS Месяц, ANY_VALUE(SUM(book.price * buy_book.amount))
+FROM book INNER JOIN buy_book USING(book_id)
+          INNER JOIN buy USING(buy_id)
+          INNER JOIN buy_step USING(buy_id)
+WHERE date_step_end IS NOT NULL AND step_id = 1
+GROUP BY MONTH(date_step_end)
+ORDER BY Месяц, Год;

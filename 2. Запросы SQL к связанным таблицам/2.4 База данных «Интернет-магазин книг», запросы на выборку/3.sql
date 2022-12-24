@@ -1,10 +1,7 @@
-/*Вывести города, в которых живут клиенты, оформлявшие заказы 
-в интернет-магазине. Указать количество заказов в каждый город. 
-Информацию вывести по убыванию количества заказов, а затем в
- алфавитном порядке по названию городов.*/
-SELECT name_city, COUNT(buy_id) AS Количество 
-FROM city 
-	INNER JOIN client ON city.city_id = client.city_id 
-    INNER JOIN buy ON client.client_id = buy.client_id 
-GROUP BY name_city 
-ORDER BY COUNT(buy_id) DESC, name_city;
+SELECT buy.buy_id, book.title, book.price, buy_book.amount  /* выбрать данные */
+FROM client                                                 /* из таблицы */
+	INNER JOIN buy ON client.client_id = buy.client_id      /* объединить с таблицей где номер клиента совпадают */
+    INNER JOIN buy_book ON buy.buy_id = buy_book.buy_id     /* объединить с таблицей где номер книги совпадают */
+    INNER JOIN book ON buy_book.book_id = book.book_id      /* объединить с таблицей где номер книги совпадают */
+WHERE client.name_client = "Баранов Павел"                  /* где имя клиента = */
+ORDER BY buy.buy_id, book.title;                            /* отсортировать по номеру заказа и названиям книг */

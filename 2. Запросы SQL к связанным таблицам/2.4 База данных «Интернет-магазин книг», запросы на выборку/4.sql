@@ -1,5 +1,11 @@
-/*Вывести номера всех оплаченных заказов и даты, когда они были оплачены.*/
-SELECT buy_id, date_step_end 
-FROM step 
-	INNER JOIN buy_step ON step.step_id = buy_step.step_id 
-WHERE step.step_id = 1 AND date_step_end IS NOT NULL;
+/*Посчитать, сколько раз была заказана каждая книга,
+ для книги вывести ее автора (нужно посчитать,
+ в каком количестве заказов фигурирует каждая книга). 
+ Результат отсортировать сначала  по фамилиям авторов,
+ а потом по названиям книг. Последний столбец назвать Количество.*/
+SELECT name_author, title, COUNT(buy_book.book_id) AS Количество 
+FROM author 
+	INNER JOIN book ON author.author_id = book.author_id 
+	LEFT JOIN buy_book ON book.book_id = buy_book.book_id 
+GROUP BY name_author, title 
+ORDER BY author.name_author, book.title;
