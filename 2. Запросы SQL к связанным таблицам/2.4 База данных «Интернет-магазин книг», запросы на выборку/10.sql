@@ -1,16 +1,7 @@
-/*В таблице city для каждого города указано количество дней, 
-за которые заказ может быть доставлен в этот город 
-(рассматривается только этап "Транспортировка"). 
-Для тех заказов, которые прошли этап транспортировки, 
-вывести количество дней за которое заказ реально доставлен 
-в город. А также, если заказ доставлен с опозданием, указать
- количество дней задержки, в противном случае вывести 0.
- Информацию вывести в отсортированном по номеру заказа виде.*/
-SELECT name_client 
-FROM author 
-	JOIN book USING(author_id) 
-    INNER JOIN buy_book USING (book_id) 
-    INNER JOIN buy USING (buy_id) 
-    INNER JOIN client USING(client_id) 
-WHERE name_author = "Достоевский Ф.М."
-ORDER BY name_client;
+SELECT DISTINCT name_client         /* выбрать уникальные значения столбца */
+FROM author                         /* из таблицы */
+    JOIN book ON (author.author_id=book.author_id) AND (author.name_author="Достоевский Ф.М.") /* объединить с таблицей при усвлоиях 1 и 2 */
+    JOIN buy_book USING(book_id)    /* объединить с таблицей по столбцу */
+    JOIN buy USING(buy_id)          /* объединить с таблицей по столбцу */
+    JOIN client USING(client_id)    /* объединить с таблицей по столбцу */
+ORDER BY name_client;               /* отсортировать по имени клиента */
