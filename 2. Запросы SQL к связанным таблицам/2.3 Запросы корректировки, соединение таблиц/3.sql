@@ -1,7 +1,15 @@
-/*Добавить новые книги из таблицы supply в таблицу book 
-на основе сформированного выше запроса. Затем вывести для просмотра таблицу book.*/
-INSERT INTO book (genre_id, title, author_id, price, amount) 
-	(SELECT NULL, title, author_id, price, amount 
-    FROM author 
-		INNER JOIN supply ON author.name_author = supply.author 
-	WHERE amount <> 0);
+INSERT INTO book                                                /* вставить в таблицу (столбцы)*/
+SELECT                                                          /* выбрать данные */
+    NULL AS book_id,                                            /* столбец не заполняем т.к. данные присваиваются автоматически */
+    title,                                                      /* столбец */
+    author_id,                                                  /* столбец */
+    NULL AS genre_id,                                           /* столбец не заполняем т.к. нет такого требования по условию задачи */
+    price,                                                      /* столбец */
+    amount                                                      /* столбец */
+FROM                                                            /* из */
+    author                                                      /* таблицы */
+    INNER JOIN supply ON author.name_author = supply.author     /* внутреннее объединение с таблицей где имена авторов равные*/
+	WHERE amount <> 0;                                          /* и где количество не равно нулю */
+
+
+
