@@ -1,14 +1,30 @@
-/*Сравнить ежемесячную выручку от продажи книг за текущий
- и предыдущий годы. Для этого вывести год, месяц, сумму 
- выручки в отсортированном сначала по возрастанию месяцев,
- затем по возрастанию лет виде. Название столбцов: Год, Месяц, Сумма.*/
-SELECT ANY_VALUE(YEAR(date_payment)) AS Год, ANY_VALUE(MONTHNAME(date_payment)) AS Месяц, ANY_VALUE(SUM(price * amount)) AS Сумма
-FROM buy_archive GROUP BY MONTH(date_payment)
-UNION ALL
-SELECT ANY_VALUE(YEAR(date_step_end)) AS Год, ANY_VALUE(MONTHNAME(date_step_end)) AS Месяц, ANY_VALUE(SUM(book.price * buy_book.amount))
-FROM book INNER JOIN buy_book USING(book_id)
-          INNER JOIN buy USING(buy_id)
-          INNER JOIN buy_step USING(buy_id)
-WHERE date_step_end IS NOT NULL AND step_id = 1
-GROUP BY MONTH(date_step_end)
-ORDER BY Месяц, Год;
+SELECT                                  /* выбрать данные */
+    YEAR(ba.date_payment) Год,          /* столбец год */
+    MONTHNAME(ba.date_payment) Месяц,   /* столбец месяц */
+    SUM(ba.price * ba.amount) Сумма     /* столбец сумма */
+FROM                                    /* из */
+    buy_archive ba                      /* таблицы с псевдонимом */
+GROUP BY                                /* сгруппировать */
+    MONTHNAME(ba.date_payment),         /* по месяцам */
+    YEAR(ba.date_payment)               /* по годам */
+
+UNION ALL                               /* объединить все */
+
+SELECT                                  /* выбрать данные */
+    YEAR(bs.date_step_end),             /* столбец год */
+    MONTHNAME(bs.date_step_end),        /* столбец месяц */
+    SUM(book.price * bb.amount)         /* столбец сумма */
+FROM                                    /* из */
+    buy                                 /* таблицы */
+    JOIN buy_step bs USING (buy_id)     /* объединенной с таблицей по столбцу */
+    JOIN buy_book bb USING (buy_id)     /* объединенной с таблицей по столбцу */
+    JOIN book USING (book_id)           /* объединенной с таблицей по столбцу */
+WHERE                                   /* где */
+    bs.date_step_end IS NOT NULL &&     /* в столбец данные внесены и */
+    bs.step_id = 1                      /* и значения столбца равны 1 */
+GROUP BY                                /* сгруппировать */
+    MONTHNAME(bs.date_step_end),        /* по месяцу */
+    YEAR(bs.date_step_end)              /* по году */
+ORDER BY                                /* отсортировать */
+    Месяц,                              /* сначала по месяцу */
+    Год;                                /* затем по году */
