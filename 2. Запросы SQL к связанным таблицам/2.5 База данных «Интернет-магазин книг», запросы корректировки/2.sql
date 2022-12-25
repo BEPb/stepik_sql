@@ -1,6 +1,9 @@
-/*Создать новый заказ для Попова Ильи. Его комментарий для заказа: 
-«Связаться со мной по вопросу доставки».*/
-INSERT INTO buy (buy_description, client_id)
-SELECT "Связаться со мной по вопросу доставки", client_id
-FROM client WHERE name_client = "Попов Илья";
-SELECT * FROM buy;
+INSERT INTO                                 /* вставить данные */
+    buy (buy.buy_description, client_id)    /* в таблицу (столбцы) */
+SELECT                                      /* выбрать данные */
+    "Связаться со мной по вопросу доставки" /* коментарий в первый столбец */
+    , client_id                             /* значение во второй столбец */
+FROM                                        /* из */
+    client                                  /* таблицы */
+WHERE                                       /* где */
+    client.name_client = "Попов Илья";      /* имя клиента */
