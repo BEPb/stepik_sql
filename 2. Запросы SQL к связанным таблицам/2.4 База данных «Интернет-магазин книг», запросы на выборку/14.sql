@@ -1,47 +1,39 @@
-/* ~~~ 1.Вывести лучших клиентов (по общей сумме заказов)
-2.То же для городов (из каких городов идут самые крупные заказы)
-3.Таргетированная реклама. Рекомендации для заказчиков:
-а)вывести другие книги заказанных вами авторов;
-б)вывести другие книги заказанных вами жанров.*/
-SELECT ANY_VALUE(name_client) AS name_client, ANY_VALUE(SUM(price * buy_book.amount)) AS Сумма_заказов_клиента 
-FROM book 
-    INNER JOIN buy_book USING (book_id)
-    INNER JOIN buy USING (buy_id)
-    INNER JOIN client USING (client_id)
-GROUP BY name_client;
+SELECT                              /* выбрать данные */
+    pivot_table.title,              /* столбец */
+    SUM(Количество) Количество,     /* столбец суммы как количество */
+    SUM(Сумма) Сумма                /* столбец суммы как сумма */
+FROM                                /* из */
+    (SELECT                         /* вложенные запрос - выбрать данные */
+        ba.book_id,                 /* столбец */
+        book.title title,           /* столбец */
+        ba.amount Количество,       /* столбец */
+        ba.price * ba.amount Сумма  /* столбец */
+    FROM                            /* из */
+        buy_archive ba              /* таблицы */
+        JOIN book USING (book_id)   /* объединенной с таблицей по столбцу */
+    WHERE                           /* где */
+        ba.date_payment IS NOT NULL /* в столбец внесены значения */
 
-SELECT ANY_VALUE(name_city) AS name_city, ANY_VALUE(SUM(price * buy_book.amount)) AS Сумма_заказов_из_города 
-FROM book 
-    INNER JOIN buy_book USING (book_id)
-    INNER JOIN buy USING (buy_id)
-    INNER JOIN client USING (client_id)
-    INNER JOIN city USING (city_id)
-GROUP BY name_city;
+    UNION ALL                       /* объединить все */
 
-SELECT ANY_VALUE(name_client) AS name_city, ANY_VALUE(name_author) AS name_author, ANY_VALUE(book.title) AS Заказывал
-FROM author
-    INNER JOIN book USING (author_id)
-    INNER JOIN buy_book USING (book_id)
-    INNER JOIN buy USING (buy_id)
-    INNER JOIN client USING (client_id)
-    INNER JOIN city USING (city_id)
-ORDER BY name_client, name_author;
+    SELECT                          /* выбрать данные */
+        bb.book_id,                 /* столбец */
+        book.title title,           /* столбец */
+        bb.amount,                  /* столбец */
+        book.price * bb.amount      /* столбец */
+    FROM                            /* из */
+        buy_book bb                 /* таблицы */
+        JOIN book USING (book_id)   /* объединенной с таблицей по столбцу */
+        JOIN buy USING (buy_id)     /* объединенной с таблицей по столбцу */
+        JOIN buy_step bs USING (buy_id) /* объединенной с таблицей по столбцу */
+        JOIN step USING (step_id)   /* объединенной с таблицей по столбцу */
+    WHERE                           /* где */
+        step.name_step = "Оплата" AND   /* условие 1 и */
+        bs.date_step_end IS NOT NULL    /* условие 2 */
+    ) AS pivot_table                    /* как псевдоним */
 
-SELECT name_author, title 
-FROM author INNER JOIN book USING (author_id)
-WHERE title NOT IN 
-(SELECT ANY_VALUE(book.title) AS title
-FROM author
-    INNER JOIN book USING (author_id)
-    INNER JOIN buy_book USING (book_id)
-    INNER JOIN buy USING (buy_id)
-    INNER JOIN client USING (client_id)
-ORDER BY name_author, title);
-
-(SELECT DISTINCT ANY_VALUE(book.title) AS title
-FROM author
-    INNER JOIN book USING (author_id)
-    INNER JOIN buy_book USING (book_id)
-    INNER JOIN buy USING (buy_id)
-    INNER JOIN client USING (client_id)
-ORDER BY title);
+GROUP BY                            /* сгруппировать */
+    pivot_table.book_id,            /* по номеру книги */
+    pivot_table.title               /* по названию */
+ORDER BY                            /* отсортировать */
+    Сумма DESC;                     /* по убыванию суммы */
