@@ -1,17 +1,39 @@
-/*Для каждой отдельной книги необходимо вывести информацию о 
-количестве проданных экземпляров и их стоимости за текущий и 
-предыдущий год . Столбцы назвать КоличествоиСумма. Информацию
- отсортировать по убыванию стоимости.*/
-SELECT ANY_VALUE(title) AS title, ANY_VALUE(SUM(Количество)) AS Количество, ANY_VALUE(SUM(Сумма)) AS Сумма
-FROM 
-    (SELECT title, buy_archive.amount AS Количество, (buy_archive.amount * buy_archive.price) AS Сумма,             YEAR(date_payment)
-    FROM buy_archive INNER JOIN book USING(book_id)
-    UNION ALL
-    SELECT book.title, buy_book.amount, (buy_book.amount * book.price), YEAR(date_step_end)
-    FROM 
-    book INNER JOIN buy_book USING(book_id)
-        INNER JOIN buy USING(buy_id)
-        INNER JOIN buy_step USING(buy_id)
-    WHERE date_step_end IS NOT NULL AND step_id = 1) buff
-GROUP BY title
-ORDER BY Сумма DESC;
+SELECT                              /* выбрать данные */
+    pivot_table.title,              /* столбец */
+    SUM(Количество) Количество,     /* столбец суммы как количество */
+    SUM(Сумма) Сумма                /* столбец суммы как сумма */
+FROM                                /* из */
+    (SELECT                         /* вложенные запрос - выбрать данные */
+        ba.book_id,                 /* столбец */
+        book.title title,           /* столбец */
+        ba.amount Количество,       /* столбец */
+        ba.price * ba.amount Сумма  /* столбец */
+    FROM                            /* из */
+        buy_archive ba              /* таблицы */
+        JOIN book USING (book_id)   /* объединенной с таблицей по столбцу */
+    WHERE                           /* где */
+        ba.date_payment IS NOT NULL /* в столбец внесены значения */
+
+    UNION ALL                       /* объединить все */
+
+    SELECT                          /* выбрать данные */
+        bb.book_id,                 /* столбец */
+        book.title title,           /* столбец */
+        bb.amount,                  /* столбец */
+        book.price * bb.amount      /* столбец */
+    FROM                            /* из */
+        buy_book bb                 /* таблицы */
+        JOIN book USING (book_id)   /* объединенной с таблицей по столбцу */
+        JOIN buy USING (buy_id)     /* объединенной с таблицей по столбцу */
+        JOIN buy_step bs USING (buy_id) /* объединенной с таблицей по столбцу */
+        JOIN step USING (step_id)   /* объединенной с таблицей по столбцу */
+    WHERE                           /* где */
+        step.name_step = "Оплата" AND   /* условие 1 и */
+        bs.date_step_end IS NOT NULL    /* условие 2 */
+    ) AS pivot_table                    /* как псевдоним */
+
+GROUP BY                            /* сгруппировать */
+    pivot_table.book_id,            /* по номеру книги */
+    pivot_table.title               /* по названию */
+ORDER BY                            /* отсортировать */
+    Сумма DESC;                     /* по убыванию суммы */
