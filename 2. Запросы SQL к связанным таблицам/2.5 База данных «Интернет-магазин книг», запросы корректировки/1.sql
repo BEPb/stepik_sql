@@ -1,6 +1,10 @@
-/* Включить нового человека в таблицу с клиентами. 
-Его имя Попов Илья, его email popov@test, проживает он в Москве.*/
-INSERT INTO client (name_client, city_id, email)
-SELECT "Попов Илья", city_id, "popov@test"
-FROM city WHERE name_city = "Москва";
-SELECT * FROM client;
+INSERT INTO client                          /* вставить данные в таблицу */
+    (name_client,                           /* столбец */
+    city_id,                                /* столбец */
+    email)                                  /* столбец */
+VALUES                                      /* значения */
+    ('Попов Илья',                          /* значение в столбец имя клиента */
+    (SELECT city_id                         /* значение в столбец номер города */
+        FROM city                           /* берем из таблицы городов */
+        WHERE name_city = 'Москва'),        /* где название города = */
+    'popov@test');                          /* значение в столбец почта */
