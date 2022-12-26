@@ -1,12 +1,15 @@
-/*Создать счет (таблицу buy_pay) на оплату заказа с номером 5, 
-в который включить название книг, их автора, цену, количество
- заказанных книг и  стоимость. Информацию в таблицу занести в
- отсортированном по названиям книг виде.*/
-CREATE TABLE buy_pay AS
-SELECT title, name_author, price, buy_book.amount, (price * buy_book.amount) AS Стоимость
-FROM author 
-    INNER JOIN book USING(author_id)
-    INNER JOIN buy_book USING(book_id)
-WHERE buy_id = 5;
-SELECT * FROM buy_pay
-ORDER BY title;
+CREATE TABLE                                    /* создать таблицу */
+    buy_pay AS                                  /* имя таблицы как, далее указываем содержимое таблицы */
+SELECT                                          /* выбрать данные */
+    title,                                      /* столбец */
+    name_author,                                /* столбец */
+    book.price,                                 /* столбец */
+    buy_book.amount,                            /* столбец */
+    (buy_book.amount * book.price) AS Стоимость /* столбец */
+FROM                                            /* из */
+    buy_book  JOIN book   USING(book_id)        /* таблицы объединенной с таблицей (по столбцу) */
+              JOIN author USING(author_id)      /* объединенной с таблицей (по столбцу) */
+WHERE                                           /* где */
+    buy_id = 5                                  /* условие */
+ORDER BY                                        /* отсортировать */
+    title;                                      /* по названию */
