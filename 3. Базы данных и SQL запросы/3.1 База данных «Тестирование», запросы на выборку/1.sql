@@ -1,8 +1,11 @@
-/*Вывести студентов, которые сдавали дисциплину «Основы баз данных», 
-указать дату попытки и результат. Информацию вывести по убыванию результатов тестирования.*/
-SELECT name_student, date_attempt, result 
-FROM student 
-    INNER JOIN attempt USING (student_id) 
-    INNER JOIN subject USING (subject_id) 
-WHERE name_subject = "Основы баз данных" 
-ORDER BY result DESC;
+
+
+SELECT                                      /* выбрать данные */
+    name_student, date_attempt, result      /* столбцы */
+FROM student                                /* из таблицы */
+    JOIN attempt USING (student_id)         /* объединенной с таблицей по столбцу */
+    JOIN subject USING (subject_id)         /* объединенной с таблицей по столбцу */
+WHERE                                       /* где */
+    name_subject = "Основы баз данных"      /* условие */
+ORDER BY                                    /* отсортировать */
+    result DESC;                            /* по убыванию результата */
