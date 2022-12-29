@@ -1,8 +1,7 @@
-/*Вывести студента (различных студентов), имеющих максимальные 
-результаты попыток. Информацию отсортировать в алфавитном порядке по фамилии студента.*/
-SELECT name_student, result 
-FROM student 
-    INNER JOIN attempt USING (student_id) 
-WHERE result = 
-    (SELECT MAX(result) FROM attempt) 
-ORDER BY name_student;
+SELECT name_student, result                 /* выбрать данные из столбцов */
+FROM student                                /* из таблицы */
+    INNER JOIN attempt USING (student_id)   /* объединенной с таблицей по столбцу */
+WHERE result =                              /* где столбец результат = вложенный запрос */
+    (SELECT MAX(result) FROM attempt)       /* максимальному результату из таблицы */
+ORDER BY name_student;                      /* отсортировать по фамилии студентов */
+
