@@ -1,12 +1,15 @@
-/*Повысить итоговые баллы абитуриентов в таблице applicant на 
-значения дополнительных баллов (использовать запрос из предыдущего урока).*/
-UPDATE applicant INNER JOIN 
-    (SELECT enrollee_id, IF(SUM(bonus) IS NULL, 0, SUM(bonus)) AS Бонус 
-    FROM achievement
-        INNER JOIN enrollee_achievement USING (achievement_id)
-        RIGHT JOIN enrollee USING (enrollee_id)
-    GROUP BY enrollee_id
-    ORDER BY enrollee_id) AS buff
-    ON applicant.enrollee_id = buff.enrollee_id
-SET itog = itog + buff.Бонус;
-SELECT * FROM applicant;
+UPDATE applicant                /* обновить таблицу */
+    -- объединение
+    JOIN
+        -- началов встроенного запроса
+        (SELECT                                                         /* выбрать данные */
+            enrollee_id,                                                /* столбец */
+            IF(SUM(bonus) IS NULL, 0, SUM(bonus)) AS Бонус              /* столбец */
+            FROM achievement                                            /* из таблицы */
+                INNER JOIN enrollee_achievement USING (achievement_id)  /* объединенной с таблицей по (столбцу) */
+                RIGHT JOIN enrollee USING (enrollee_id)                 /* объединенной с таблицей по (столбцу) */
+            GROUP BY enrollee_id                                        /* сгруппировать по столбцу */
+            ORDER BY enrollee_id) AS buff                               /* отсортировать по столбцу, результат поместить в буфер */
+        -- конец встроенного запроса
+    USING (enrollee_id)                                                 /* объединенной с таблицей по (столбцу) */
+SET itog = itog + buff.Бонус;                                           /* пересчитать значения столбца */
