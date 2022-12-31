@@ -1,17 +1,15 @@
-/*Реализовать поиск по ключевым словам. Вывести шаги, с которыми 
-связаны ключевые слова MIN и AVG одновременно. Для шагов 
-указать номер модуля, номер урока, номер шага через точку, 
-после номера шага перед заголовком - пробел. Столбец назвать Шаг. 
-Информацию отсортировать по возрастанию сначала по порядковому номеру
- модуля, затем по порядковым номерам урока и шага соответственно.*/
-SELECT 
-    CONCAT(CONCAT(CONCAT(CONCAT(module_id, "."), CONCAT(lesson_position, ".")), CONCAT(step_position, " ")), step_name) AS Шаг
-FROM module
-    INNER JOIN lesson USING (module_id)
-    INNER JOIN step USING (lesson_id)
-    INNER JOIN step_keyword USING (step_id)
-    INNER JOIN keyword USING (keyword_id)
-WHERE keyword_name IN ("MAX", "MIN")
-GROUP BY step_id
-HAVING COUNT(keyword_name) = 2
-ORDER BY module_id, lesson_id, step_id;
+SELECT                                      /* выбрать данные */
+    -- создаем столбец указать номер модуля, номер урока, номер шага через точку,
+    -- после номера шага перед заголовком - пробел. Столбец назвать Шаг.
+    concat(module_id,'.',lesson_position,
+           IF(step_position < 10, ".0","."),
+           step_position," ",step_name) AS Шаг
+FROM step                                   /* из таблицы */
+   JOIN lesson USING(lesson_id)             /* объединенной с таблицей по (столбцу) */
+   JOIN module USING(module_id)             /* объединенной с таблицей по (столбцу) */
+   JOIN step_keyword USING (step_id)        /* объединенной с таблицей по (столбцу) */
+   JOIN keyword USING(keyword_id)           /* объединенной с таблицей по (столбцу) */
+WHERE keyword_name = 'MAX' OR keyword_name ='AVG' /* где условие 1 или условие 2 */
+GROUP BY ШАГ                                /* сгруппировать по столбцу */
+HAVING COUNT(*) = 2                         /* условие количество = 2 */
+ORDER BY 1;                                 /* отсортировать по 1-му столбцу */
