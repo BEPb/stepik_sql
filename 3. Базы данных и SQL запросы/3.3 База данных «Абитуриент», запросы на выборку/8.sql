@@ -1,10 +1,8 @@
-/*Вывести образовательные программы, на которые для поступления 
-необходимы предмет «Информатика» и «Математика» в отсортированном по названию программ виде.*/
-SELECT ANY_VALUE(name_program) AS name_program
-FROM program 
-    INNER JOIN program_subject USING (program_id)
-    INNER JOIN subject USING (subject_id)
-WHERE name_subject IN ("Информатика", "Математика")
-GROUP BY name_program
-HAVING COUNT(name_subject) = 2
-ORDER BY name_program;
+SELECT ANY_VALUE(name_program) AS name_program      /* выбрать данные столбец */
+FROM program                                        /* из таблицы */
+    INNER JOIN program_subject USING (program_id)   /* объединенная с таблицей по столбцу */
+    INNER JOIN subject USING (subject_id)           /* объединенная с таблицей по столбцу */
+WHERE name_subject IN ("Информатика", "Математика") /* где условие */
+GROUP BY name_program                               /* сгруппировать по столбцу */
+HAVING COUNT(name_subject) = 2                      /* условие 2 */
+ORDER BY name_program;                              /* отсортировать по столбцу */
