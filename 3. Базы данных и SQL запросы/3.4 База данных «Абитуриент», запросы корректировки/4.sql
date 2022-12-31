@@ -1,9 +1,4 @@
-/*Поскольку при добавлении дополнительных баллов, абитуриенты по каждой 
-образовательной программе могут следовать не в порядке убывания суммарных 
-баллов, необходимо создать новую таблицу applicant_order  на основе таблицы 
-applicant. При создании таблицы данные нужно отсортировать сначала по id
-образовательной программы, потом по убыванию итогового балла. А таблицу
- applicant, которая была создана как вспомогательная, необходимо удалить.*/
-CREATE TABLE applicant_order AS
-(SELECT program_id, enrollee_id, itog FROM applicant ORDER BY program_id, itog DESC);
-DROP TABLE applicant;
+CREATE TABLE applicant_order AS     /* создать таблицу как */
+SELECT * FROM applicant             /* выбрать все столбцы таблицы */
+    ORDER BY program_id, itog DESC; /* отсортировать по столбцам */
+DROP TABLE applicant                /* удалить таблицу */
