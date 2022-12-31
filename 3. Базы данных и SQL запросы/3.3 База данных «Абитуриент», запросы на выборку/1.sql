@@ -1,8 +1,6 @@
-/*Вывести абитуриентов, которые хотят поступать на образовательную 
-программу «Мехатроника и робототехника» в отсортированном по фамилиям виде.*/
-SELECT name_enrollee
-FROM program 
-    INNER JOIN program_enrollee USING (program_id)
-    INNER JOIN enrollee USING (enrollee_id)
-WHERE name_program = "Мехатроника и робототехника"
-ORDER BY name_enrollee;
+SELECT name_enrollee                                /* выбрать данные и столбца */
+FROM program                                        /* таблицы */
+    INNER JOIN program_enrollee USING (program_id)  /* объединенной с таблицей по (столбцу) */
+    INNER JOIN enrollee USING (enrollee_id)         /* объединенной с таблицей по (столбцу) */
+WHERE name_program = "Мехатроника и робототехника"  /* где условие */
+ORDER BY name_enrollee;                             /* отсортировать по столбцу */
