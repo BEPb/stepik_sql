@@ -1,14 +1,13 @@
-/*Случайным образом выбрать три вопроса (запрос) по дисциплине, 
-тестирование по которой собирается проходить студент, 
-занесенный в таблицу attempt последним, и добавить их в 
-таблицу testing. id последней попытки получить как максимальное 
-значение id из таблицы attempt.*/
-INSERT INTO testing (attempt_id, question_id, answer_id)
-(SELECT (SELECT MAX(attempt_id) + 1 FROM testing), question_id, NULL
-FROM question 
-WHERE subject_id = 
-    (SELECT DISTINCT subject_id FROM attempt WHERE student_id = 
-         (SELECT MAX(student_id) FROM attempt))
-ORDER BY RAND()
-LIMIT 3);
-SELECT * FROM testing;
+INSERT INTO                                 /* вставить в */
+    testing (attempt_id, question_id)       /* таблицу (столбцы) */
+SELECT                                      /* выбрать данные */
+    att.attempt_id,                         /* столбец */
+    qst.question_id                         /* столбец */
+FROM                                        /* из */
+    question qst                            /* таблицы */
+    JOIN attempt att USING (subject_id)     /* объединенной с таблицей (по столбцу) */
+WHERE                                       /* где */
+    att.attempt_id =                        /* условие = встроенному запросу */
+    (SELECT MAX(attempt_id) FROM attempt)   /* встроенный запрос максимальное значение столбца из таблицы */
+ORDER BY RAND()                             /* выбрать случайные значения */
+LIMIT 3;                                    /* не более 3-х строк */
