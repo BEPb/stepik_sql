@@ -1,11 +1,10 @@
-/*Создать таблицу student,  в которую включить абитуриентов, 
-которые могут быть рекомендованы к зачислению  в соответствии 
-с планом набора. Информацию отсортировать сначала в алфавитном 
-порядке по названию программ, а потом по убыванию итогового балла.*/
-CREATE TABLE student AS
-SELECT name_program, name_enrollee, itog
-FROM program
-    INNER JOIN applicant_order USING (program_id)
-    INNER JOIN enrollee USING (enrollee_id)
-WHERE str_id <= plan
-ORDER BY name_program, itog DESC;
+CREATE TABLE student AS                             /* создать таблицу как */
+SELECT                                              /* выбрать данные */
+    name_program,                                   /* столбец */
+    name_enrollee,                                  /* столбец */
+    itog                                            /* столбец */
+FROM program                                        /* из таблицы */
+    INNER JOIN applicant_order USING (program_id)   /* объединенной с таблицей по (столбцу) */
+    INNER JOIN enrollee USING (enrollee_id)         /* объединенной с таблицей по (столбцу) */
+WHERE str_id <= plan                                /* где условие */
+ORDER BY name_program, itog DESC;                   /* отсортировать по столбцам */
