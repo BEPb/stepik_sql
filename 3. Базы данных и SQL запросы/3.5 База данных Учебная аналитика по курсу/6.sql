@@ -1,4 +1,4 @@
-WITH get_count_correct (st_n_c, count_correct)
+WITH get_count_correct (st_n_c, count_correct)          /* создадим табличное выражение */
 AS (
     SELECT student_name, count(*) as rate
     FROM 
